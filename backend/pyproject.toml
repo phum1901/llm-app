@@ -1,0 +1,12 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.115.12",
+    "google-ai-haystack>=5.1.0",
+    "haystack-ai>=2.11.2",
+    "mcp[cli]>=1.6.0",
+]
