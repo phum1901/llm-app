@@ -77,4 +77,4 @@ def get_sensor_status() -> Dict[str, str]:
 
 
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run(transport='sse')
