@@ -1,11 +1,11 @@
 from fastapi import FastAPI, APIRouter
-from app.mcp_tools import mcp as mcp_server
+from app.mcp_tools import mcp as mcp_server  # noqa
 from app.models import ChatRequest
 from app.mcp_client import MCPClient
 from fastapi.middleware.cors import CORSMiddleware
 
 
-mcp_client = MCPClient("http://localhost:8000/sse")
+mcp_client = MCPClient("http://localhost:8001/sse")
 
 
 app = FastAPI()
@@ -34,4 +34,4 @@ async def responses(chat_request: ChatRequest):
 
 
 app.include_router(router)
-app.mount("/", app=mcp_server.sse_app())
+# app.mount("/", app=mcp_server.sse_app())
