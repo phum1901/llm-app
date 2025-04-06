@@ -28,7 +28,7 @@ class MCPClient:
         """Process a query using Gemini and available tools"""
         messages = [types.UserContent([types.Part.from_text(text=query)])]
         response = self.llm.models.generate_content(
-            model="gemini-2.5-pro-exp-03-25",
+            model=os.getenv("MODEL_NAME", "gemini-2.5-pro-exp-03-25"),
             contents=messages,
             config=types.GenerateContentConfig(
                 tools=available_tools,
@@ -62,9 +62,10 @@ class MCPClient:
                         ],
                     )
                 )
+                print(messages)
 
                 response = self.llm.models.generate_content(
-                    model="gemini-2.5-pro-exp-03-25",
+                    model=os.getenv("MODEL_NAME", "gemini-2.5-pro-exp-03-25"),
                     contents=messages,
                 )
 
