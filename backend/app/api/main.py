@@ -3,9 +3,9 @@ from app.mcp_tools import mcp as mcp_server
 from app.models import ChatRequest
 from app.mcp_client import MCPClient
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
-
-mcp_client = MCPClient("http://localhost:8000/sse")
+mcp_client = MCPClient(os.getenv("MCP_BUILDING_SENSORS_URL"))
 
 
 app = FastAPI()

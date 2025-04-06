@@ -1,0 +1,29 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - MCP_BUILDING_SENSORS_URL=http://building-sensors:8080/sse
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    command: ["fastapi", "run", "app/api/main.py"]
+
+
+  building-sensors:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    expose:
+      - 8080
+    command: ["python", "app/mcp_tools.py"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend

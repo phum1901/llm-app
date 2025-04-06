@@ -1,8 +1,9 @@
 from mcp.server.fastmcp import FastMCP
 import random
 from typing import Dict, List
+import os
 
-mcp = FastMCP("Building Sensors")
+mcp = FastMCP("Building Sensors", port=os.getenv("MCP_BUILDING_SENSORS_PORT", 8080))
 
 # Mock data storage
 _sensor_data = {
@@ -77,4 +78,4 @@ def get_sensor_status() -> Dict[str, str]:
 
 
 if __name__ == "__main__":
-    mcp.run(transport='sse')
+    mcp.run(transport="sse")
