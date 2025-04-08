@@ -40,7 +40,7 @@ function ChatInterface() {
 
             try {
                 // Make API call to backend
-                const response = await fetch('http://localhost:8000/chat/responses', {
+                const response = await fetch('http://localhost:8000/responses', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
