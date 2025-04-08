@@ -1,6 +1,6 @@
 from haystack import Pipeline
 from haystack_integrations.document_stores.qdrant import QdrantDocumentStore
-from haystack.components.converters import PyPDFToDocument
+from haystack.components.converters.txt import TextFileToDocument
 from haystack.components.preprocessors import DocumentCleaner
 from haystack_integrations.components.embedders.fastembed import (
     FastembedDocumentEmbedder,
@@ -15,19 +15,17 @@ import os
 def indexing_pipeline():
     document_store = QdrantDocumentStore(
         url=os.getenv("QDRANT_URL"),
-        index="ashrae-hvac-systems-and-equipment",
+        index=os.getenv("COLLECTION_NAME"),
         embedding_dim=384,
     )
 
-    document_embedder = FastembedDocumentEmbedder(
-        model="sentence-transformers/all-MiniLM-L6-v2"
-    )
+    document_embedder = FastembedDocumentEmbedder(model=os.getenv("EMBEDDING_MODEL"))
 
     pipeline = Pipeline()
-    pipeline.add_component("converter", PyPDFToDocument())
+    pipeline.add_component("converter", TextFileToDocument())
     pipeline.add_component("cleaner", DocumentCleaner())
     pipeline.add_component(
-        "splitter", DocumentSplitter(split_by="word", split_length=64, split_overlap=4)
+        "splitter", DocumentSplitter(split_by="word", split_length=50, split_overlap=10)
     )
     pipeline.add_component("embedder", document_embedder)
     pipeline.add_component("writer", DocumentWriter(document_store=document_store))
@@ -41,24 +39,11 @@ def indexing_pipeline():
 
 
 def main():
-    print("running")
     pipeline = indexing_pipeline()
+    filenames = ["app/mock_instruction_manual.txt"]
 
-    file_names = [
-        "https://irancanftech.com/book/ASHRAE-HVAC-SYSTEMS-AND-EQUIPMENT-2020.pdf"
-    ]
-    files = []
-
-    # Download PDF from URLs and process them
-    for url in file_names:
-        response = requests.get(url)
-        if response.status_code == 200:
-            pdf_content = response.content
-            files.append(ByteStream(data=pdf_content))
-
-    pipeline.run({"converter": {"sources": files}})
+    pipeline.run({"converter": {"sources": filenames}})
 
 
 if __name__ == "__main__":
-    print("running")
     main()
