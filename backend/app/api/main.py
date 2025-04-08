@@ -34,4 +34,4 @@ async def responses(chat_request: ChatRequest):
 
 
 app.include_router(router)
-# app.mount("/", app=mcp_server.sse_app())
+app.mount("/", app=mcp_server.sse_app())
