@@ -5,20 +5,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    env_file: .env
     environment:
-      - MCP_BUILDING_SENSORS_URL=http://building-sensors:8080/sse
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-      - MODEL_NAME=${MODEL_NAME}
+      - QDRANT_URL=http://qdrant:6333
     command: ["fastapi", "run", "app/api/main.py"]
-
-
-  building-sensors:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    expose:
-      - 8080
-    command: ["python", "app/mcp_tools.py"]
 
   frontend:
     build:
