@@ -1,4 +1,5 @@
 import os
+
 from pydantic_ai.mcp import MCPServerStdio
 
 building_sensors = MCPServerStdio(

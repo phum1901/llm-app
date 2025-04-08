@@ -1,12 +1,8 @@
-from fastapi import FastAPI, APIRouter
-from app.mcp_tools import mcp as mcp_server  # noqa
-from app.models import ChatRequest
-from app.mcp_client import MCPClient
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
 
-mcp_client = MCPClient(os.getenv("MCP_BUILDING_SENSORS_URL"))
-
+from app import agents
+from app.models import ChatRequest
 
 app = FastAPI()
 
@@ -19,19 +15,13 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-router = APIRouter(prefix="/chat", tags=["chat"])
 
-
-@router.get("/")
+@app.get("/")
 def root():
     return {"result": "success"}
 
 
-@router.post("/responses")
+@app.post("/responses")
 async def responses(chat_request: ChatRequest):
-    response = await mcp_client.process_query(chat_request.message)
+    response = await agents.run(chat_request.message)
     return {"result": response}
-
-
-app.include_router(router)
-app.mount("/", app=mcp_server.sse_app())

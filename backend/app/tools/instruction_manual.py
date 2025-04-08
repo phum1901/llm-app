@@ -1,10 +1,10 @@
 import os
-from mcp.server.fastmcp import FastMCP
+
+from haystack import Pipeline
 from haystack_integrations.components.embedders.fastembed import FastembedTextEmbedder
 from haystack_integrations.components.retrievers.qdrant import QdrantEmbeddingRetriever
 from haystack_integrations.document_stores.qdrant import QdrantDocumentStore
-from haystack import Pipeline
-from typing import List
+from mcp.server.fastmcp import FastMCP
 
 document_store = QdrantDocumentStore(
     url=os.getenv("QDRANT_URL"),
@@ -25,7 +25,7 @@ mcp = FastMCP("Instruction Manual")
 
 
 @mcp.tool()
-async def retrieve_instruction_manual(query: str) -> List[str]:
+async def retrieve_instruction_manual(query: str) -> list[str]:
     """Retrieve the instruction manual from the HVAC System Instruction Manual guide"""
     # print(query)
     result = query_pipeline.run({"text_embedder": {"text": query}})

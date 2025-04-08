@@ -1,15 +1,13 @@
+import os
+
 from haystack import Pipeline
-from haystack_integrations.document_stores.qdrant import QdrantDocumentStore
 from haystack.components.converters.txt import TextFileToDocument
-from haystack.components.preprocessors import DocumentCleaner
+from haystack.components.preprocessors import DocumentCleaner, DocumentSplitter
+from haystack.components.writers import DocumentWriter
 from haystack_integrations.components.embedders.fastembed import (
     FastembedDocumentEmbedder,
 )
-from haystack.components.preprocessors import DocumentSplitter
-from haystack.components.writers import DocumentWriter
-from haystack.dataclasses.byte_stream import ByteStream
-import requests
-import os
+from haystack_integrations.document_stores.qdrant import QdrantDocumentStore
 
 
 def indexing_pipeline():

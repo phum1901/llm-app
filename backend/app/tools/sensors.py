@@ -1,6 +1,6 @@
-from mcp.server.fastmcp import FastMCP
 import random
-from typing import Dict
+
+from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("Building Sensors")
 
@@ -58,7 +58,7 @@ def get_zone_occupancy(zone: str) -> float:
 
 
 @mcp.tool()
-def get_zone_environmental_data(zone: str) -> Dict[str, float]:
+def get_zone_environmental_data(zone: str) -> dict[str, float]:
     """Get all environmental data for a specific zone (A-F)"""
     if zone not in sensor_data:
         raise ValueError(f"Invalid zone: {zone}. Must be one of A-F")

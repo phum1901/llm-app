@@ -1,17 +1,21 @@
-import os
 import asyncio
-from pydantic_ai import Agent, RunContext
-from app.mcp_servers import building_sensors, instruction_manual
+import os
+from textwrap import dedent
 
+from pydantic_ai import Agent, RunContext
+
+from app.mcp_servers import building_sensors, instruction_manual
 
 technical_agent = Agent(
     name="technical_agent",
     model=os.getenv("MODEL_NAME"),
     result_retries=3,
     mcp_servers=[building_sensors],
-    system_prompt=(
-        "You are a technical officer responsible for collecting data from sensors installed within a building.",
-        "Your primary duty is to gather sensor readings accurately and consistently for further analysis.",
+    system_prompt=dedent(
+        """
+        You are a technical officer responsible for collecting data from sensors installed within a building.
+        Your primary duty is to gather sensor readings accurately and consistently for further analysis.
+        """  # noqa: E501
     ),
 )
 
@@ -20,8 +24,11 @@ retrieval_agent = Agent(
     model=os.getenv("MODEL_NAME"),
     result_retries=3,
     mcp_servers=[instruction_manual],
-    system_prompt=(
-        "You are an expert technician responsible for finding the most relevant documents from an instruction manual or handbook to help answer the query"
+    system_prompt=dedent(
+        """
+        You are an expert technician responsible for finding the most relevant documents from
+        an instruction manual or handbook to help answer the query
+        """  # noqa: E501
     ),
 )
 
@@ -30,14 +37,18 @@ supervisor_agent = Agent(
     model=os.getenv("MODEL_NAME"),
     result_retries=5,
     end_strategy="exhaustive",
-    system_prompt=(
-        "You are a supervisor responsible for orchestrating the collaboration between the technical_agent and retrieval_agent.",
-        "For any incoming query:\n",
-        "1. If the query involves getting current sensor readings (temperature, CO2, humidity, etc.), use get_building_sensors",
-        # "2. If the query involves procedures, protocols, or what to do in certain situations, use retrieve_instruction_manual",
-        "2. Respond must include actionable steps to take based on the sensor data you can get instructions from the technical_agent",
-        # "3. For complex queries that need both sensor data and procedures, use both tools in sequence",
-        "Your goal is to provide complete answers with actionable next steps by combining information from both agents when necessary.",
+    system_prompt=dedent(
+        """
+        You are a supervisor coordinating the technical_agent and retrieval_agent.
+        For each query:
+
+        1. Use get_building_sensors if it involves current sensor data (e.g., temperature, CO2, humidity).
+        2. Use retrieve_instruction_manual for procedures, protocols, or situational guidance.
+        3. Always include actionable steps—consult the technical_agent when interpreting sensor data.
+        4. For complex queries, use both tools in sequence.
+
+        Your goal is to deliver complete, actionable answers by combining input from both agents when needed.
+        """  # noqa: E501
     ),
 )
 
@@ -56,11 +67,11 @@ async def retrieve_instruction_manual(ctx: RunContext, query: str) -> str:
     return f"Manual Instructions: {result.data}"
 
 
-async def main(query: str):
+async def run(query: str):
     async with technical_agent.run_mcp_servers(), retrieval_agent.run_mcp_servers():
         response = await supervisor_agent.run(query)
         return response.data
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(run())
