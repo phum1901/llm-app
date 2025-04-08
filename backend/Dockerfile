@@ -12,4 +12,6 @@ COPY ./pyproject.toml ./uv.lock /app/
 
 RUN uv sync --frozen
 
+COPY ./scripts /app/scripts
+
 COPY ./app /app/app
