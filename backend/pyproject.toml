@@ -14,6 +14,7 @@ dependencies = [
     "qdrant-haystack>=9.1.1",
     "fastembed-haystack>=1.4.1",
     "pydantic-ai>=0.0.53",
+    "agno>=1.2.15",
 ]
 
 [dependency-groups]
